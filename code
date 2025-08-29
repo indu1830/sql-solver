@@ -38,7 +38,18 @@ public class Application implements CommandLineRunner {
         System.out.println("Access Token: " + accessToken);
 
         // Step 2: Solve SQL problem (mock answer here, replace with real query)
-        String finalQuery = "SELECT name, regNo, email FROM students;";
+        String finalQuery = "SELECT 
+    p.AMOUNT AS SALARY,
+    CONCAT(e.FIRST_NAME, ' ', e.LAST_NAME) AS NAME,
+    TIMESTAMPDIFF(YEAR, e.DOB, CURDATE()) AS AGE,
+    d.DEPARTMENT_NAME
+FROM PAYMENTS p
+JOIN EMPLOYEE e ON p.EMP_ID = e.EMP_ID
+JOIN DEPARTMENT d ON e.DEPARTMENT = d.DEPARTMENT_ID
+WHERE DAY(p.PAYMENT_TIME) <> 1
+ORDER BY p.AMOUNT DESC
+LIMIT 1;
+";
 
         // Step 3: Submit solution
         HttpHeaders authHeaders = new HttpHeaders();
