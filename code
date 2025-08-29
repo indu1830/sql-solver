@@ -1,13 +1,58 @@
-private String solveQuestion1() {
-    return "SELECT " +
-           "p.AMOUNT AS SALARY, " +
-           "CONCAT(e.FIRST_NAME, ' ', e.LAST_NAME) AS NAME, " +
-           "TIMESTAMPDIFF(YEAR, e.DOB, CURDATE()) AS AGE, " +
-           "d.DEPARTMENT_NAME " +
-           "FROM PAYMENTS p " +
-           "JOIN EMPLOYEE e ON p.EMP_ID = e.EMP_ID " +
-           "JOIN DEPARTMENT d ON e.DEPARTMENT = d.DEPARTMENT_ID " +
-           "WHERE DAY(p.PAYMENT_TIME) <> 1 " +
-           "ORDER BY p.AMOUNT DESC " +
-           "LIMIT 1;";
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
+
+import java.util.*;
+
+@SpringBootApplication
+public class Application implements CommandLineRunner {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Step 1: Call generateWebhook API
+        String url = "https://bfhldevapigw.healthrx.co.in/hiring/generateWebhook/JAVA";
+
+        Map<String, String> body = new HashMap<>();
+        body.put("name", "John Doe");
+        body.put("regNo", "REG12347");
+        body.put("email", "john@example.com");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+        Map response = restTemplate.postForObject(url, request, Map.class);
+
+        String webhook = (String) response.get("webhook");
+        String accessToken = (String) response.get("accessToken");
+
+        System.out.println("Webhook: " + webhook);
+        System.out.println("Access Token: " + accessToken);
+
+        // Step 2: Solve SQL problem (mock answer here, replace with real query)
+        String finalQuery = "SELECT name, regNo, email FROM students;";
+
+        // Step 3: Submit solution
+        HttpHeaders authHeaders = new HttpHeaders();
+        authHeaders.setContentType(MediaType.APPLICATION_JSON);
+        authHeaders.setBearerAuth(accessToken);
+
+        Map<String, String> answerBody = new HashMap<>();
+        answerBody.put("finalQuery", finalQuery);
+
+        HttpEntity<Map<String, String>> answerRequest = new HttpEntity<>(answerBody, authHeaders);
+
+        ResponseEntity<String> submitResponse = restTemplate.postForEntity(
+                webhook, answerRequest, String.class);
+
+        System.out.println("Submit Response: " + submitResponse.getBody());
+    }
 }
