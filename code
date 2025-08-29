@@ -17,7 +17,7 @@ public class Application implements CommandLineRunner {
     public void run(String... args) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Step 1: Call generateWebhook API
+        
         String url = "https://bfhldevapigw.healthrx.co.in/hiring/generateWebhook/JAVA";
 
         Map<String, String> body = new HashMap<>();
@@ -37,7 +37,7 @@ public class Application implements CommandLineRunner {
         System.out.println("Webhook: " + webhook);
         System.out.println("Access Token: " + accessToken);
 
-        // Step 2: Solve SQL problem (mock answer here, replace with real query)
+        
         String finalQuery = "SELECT 
     p.AMOUNT AS SALARY,
     CONCAT(e.FIRST_NAME, ' ', e.LAST_NAME) AS NAME,
@@ -51,7 +51,7 @@ ORDER BY p.AMOUNT DESC
 LIMIT 1;
 ";
 
-        // Step 3: Submit solution
+        
         HttpHeaders authHeaders = new HttpHeaders();
         authHeaders.setContentType(MediaType.APPLICATION_JSON);
         authHeaders.setBearerAuth(accessToken);
